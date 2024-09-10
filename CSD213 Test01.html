@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        table {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+            border-collapse: collapse;
+            width: 70%;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        input, button {
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+        button {
+            cursor: pointer;
+        }
+        .container {
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Grade Activities</h1>
+        
+        <div class="input-group">
+            <label for="activity">Activity</label>
+            <input type="text" id="activity">
+            
+            <label for="weight">Weight</label>
+            <input type="number" id="weight" min="1" max="100">
+        </div>
+
+        <button onclick="addActivity()" id="addActivity">Add Activity</button>
+
+        <div class="input-group">
+            <label for="grade">Grade</label>
+            <input type="number" id="grade" min="0" max="100">
+
+            <label for="activityNo">Activity No</label>
+            <input type="number" id="activityNo" min="1">
+        </div>
+
+        <button onclick="addGrade()" id="addGrade">Add Grade</button>
+        <button onclick="deleteActivity()" id="deleteActivity">Delete Activity</button>
+        
+        <table id="theTable">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Activity</th>
+                    <th>Weight</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Lab1</td>
+                    <td>10</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Lab2</td>
+                    <td>20</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>Test1</td>
+                    <td>30</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>Test2</td>
+                    <td>40</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <p id="ERR" style="color:red;">Error Message: </p>
+    </div>
+
+    <script>
+        let noActivity = 4;  
+        const ERR = document.getElementById("ERR");
+
+        function addActivity() {
+            const activity = document.getElementById("activity").value.trim();
+            const weight = parseInt(document.getElementById("weight").value, 10);
+
+            
+            if (activity === "") {
+                ERR.textContent = "Error Message: Activity name is rejected.";
+                return;
+            }
+            if (isNaN(weight) || weight < 1 || weight > 100) {
+                ERR.textContent = "Error Message: Weight is rejected.";
+                return;
+            }
+
+            
+            noActivity++;
+            const table = document.getElementById("theTable").getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            newRow.innerHTML = `
+                <td>${noActivity}</td>
+                <td>${activity}</td>
+                <td>${weight}</td>
+                <td></td>
+            `;
+
+            
+            document.getElementById("activity").value = "";
+            document.getElementById("weight").value = "";
+            ERR.textContent = "";
+        }
+
+        function addGrade() {
+            const activityNo = parseInt(document.getElementById("activityNo").value, 10);
+            const grade = parseInt(document.getElementById("grade").value, 10);
+
+            
+            if (isNaN(activityNo) || activityNo < 1 || activityNo > noActivity) {
+                ERR.textContent = "Error Message: Activity No is rejected.";
+                return;
+            }
+            if (isNaN(grade) || grade < 0 || grade > 100) {
+                ERR.textContent = "Error Message: Grade is rejected.";
+                return;
+            }
+
+            
+            const table = document.getElementById("theTable").getElementsByTagName('tbody')[0];
+            const row = table.rows[activityNo - 1];
+            row.cells[3].textContent = grade;
+
+            
+            document.getElementById("grade").value = "";
+            document.getElementById("activityNo").value = "";
+            ERR.textContent = "";
+        }
+
+        function deleteActivity() {
+            if (noActivity <= 0) {
+                ERR.textContent = "Error Message: No more activities to remove.";
+                return;
+            }
+
+            
+            const table = document.getElementById("theTable").getElementsByTagName('tbody')[0];
+            table.deleteRow(table.rows.length - 1);
+            noActivity--;
+
+            
+            for (let i = 0; i < table.rows.length; i++) {
+                table.rows[i].cells[0].textContent = i + 1;
+            }
+
+            ERR.textContent = "";
+        }
+    </script>
+</body>
+</html>
+
